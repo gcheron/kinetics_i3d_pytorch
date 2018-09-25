@@ -250,6 +250,8 @@ class I3D(torch.nn.Module):
         out = self.mixed_4d(out)
         out = self.mixed_4e(out)
         out = self.mixed_4f(out)
+        if hasattr(self, 'extract_feats') and self.extract_feats:
+            out_mixed_4f = out.clone().cpu()
         out = self.maxPool3d_5a_2x2(out)
         out = self.mixed_5b(out)
         out = self.mixed_5c(out)
@@ -261,6 +263,8 @@ class I3D(torch.nn.Module):
         out = out.mean(2)
         out_logits = out
         out = self.softmax(out_logits)
+        if hasattr(self, 'extract_feats') and self.extract_feats:
+            return out, out_logits, out_mixed_4f
         return out, out_logits
 
     def load_tf_weights(self, sess):
